@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="format" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <!-- <property name="ContentType" value="application/json" scope="axis2"/> -->
+    <log category="INFO" level="full" />
+    <propertyGroup>
+        <property name="timestamp" scope="default" type="STRING" expression="json-eval($.salesdata.time)" action="set" />
+        <property name="productId" scope="default" type="STRING" expression="json-eval($.salesdata.product)"
+            action="set" />
+        <property name="storeId" scope="default" type="STRING" expression="json-eval($.salesdata.store)" />
+        <property name="customerId" scope="default" type="STRING" expression="json-eval($.salesdata.customer)"
+            action="set" />
+        <property name="quantity" scope="default" type="INTEGER" expression="json-eval($.salesdata.quantity)" action="set" />
+    </propertyGroup>
+
+    <payloadFactory media-type="json" template-type="default">
+        <format>{"id": "$1"}</format>
+        <args>
+            <arg expression="get-property('productId')" evaluator="xml" />
+        </args>
+    </payloadFactory>
+    <call>
+        <endpoint key="ProductIdService" />
+    </call>
+    <property name="productId" scope="default" type="STRING" expression="json-eval($.newId)" action="set" />
+
+    <log category="INFO" level="custom">
+        <property name="p-newProductId" expression="get-property('productId')" />
+    </log>
+
+    <!-- <enrich description="">
+        <source clone="true" type="inline">P100</source>
+        <target action="replace" xpath="json-eval($.aaa)" />
+    </enrich> -->
+
+    <enrich description="">
+        <source clone="true" type="body" />
+        <target action="replace" type="property" property="sale_data" />
+    </enrich>
+
+    <dblookup>
+        <connection>
+            <pool>
+                <driver>com.mysql.cj.jdbc.Driver</driver>
+                <url>$FILE:PRODUCT_DB_URL</url>
+                <user>$FILE:PRODUCT_DB_USER</user>
+                <password>$FILE:PRODUCT_DB_PASS</password>
+            </pool>
+        </connection>
+        <statement>
+            <sql><![CDATA[SELECT product_name, unit_price FROM gmart.products where product_id=?;]]></sql>
+            <parameter expression="get-property('productId')" type="CHAR" />
+            <result column="product_name" name="productName" />
+            <result column="unit_price" name="unitPrice" />
+        </statement>
+    </dblookup>
+
+    <filter xpath="boolean(get-property('productName'))">
+        <then>
+            <log category="INFO" level="custom">
+                <property name="product-found" expression="get-property('productName')" />
+            </log>
+        </then>
+        <else>
+            <log category="INFO" level="custom">
+                <property name="product-not-found" expression="get-property('productName')" />
+            </log>
+            <payloadFactory media-type="text" template-type="default">
+                <format>
+                    $1,$2,$3,$4,$5</format>
+                <args>
+                    <arg expression="get-property('timestamp')" evaluator="xml" />
+                    <arg expression="get-property('productId')" evaluator="xml" />
+                    <arg expression="get-property('storeId')" evaluator="xml" />
+                    <arg expression="get-property('customerId')" evaluator="xml" />
+                    <arg expression="get-property('quantity')" evaluator="xml" />
+                </args>
+            </payloadFactory>
+            <file.write configKey="FailedDataFile">
+                <mimeType>text/plain</mimeType>
+                <writeMode>Append</writeMode>
+                <encoding>UTF-8</encoding>
+                <appendNewLine>true</appendNewLine>
+                <enableStreaming>false</enableStreaming>
+                <enableLock>false</enableLock>
+                <updateLastModified>true</updateLastModified>
+                <maxRetries>0</maxRetries>
+                <retryDelay>0</retryDelay>
+                <includeResultTo>Message Body</includeResultTo>
+                <filePath>/sales/failed/invalid_data.csv</filePath>
+                <appendPosition>1</appendPosition>
+            </file.write>
+            <drop />
+        </else>
+    </filter>
+
+    <log category="INFO" level="full" />
+    <log category="INFO" level="custom">
+        <property name="text" expression="get-property('productName')" />
+    </log>
+
+    <property name="uri.var.customerId" scope="default" type="STRING"
+        expression="get-property('customerId')" />
+
+    <call>
+        <endpoint key="CRMService" />
+    </call>
+
+    <log category="INFO" level="full" />
+
+    <property name="customerAge" scope="default" type="INTEGER" expression="json-eval($.age)" action="set" />
+
+    <dbreport>
+        <connection>
+            <pool>
+                <driver>com.mysql.cj.jdbc.Driver</driver>
+                <url>$FILE:SALES_DATA_DB_URL</url>
+                <user>$FILE:SALES_DATA_DB_USER</user>
+                <password>$FILE:SALES_DATA_DB_PASS</password>
+            </pool>
+        </connection>
+        <statement>
+            <sql>
+                INSERT INTO sales_data (`timestamp`, `productId`, `productName`, `storeId`, `customerId`, `customerAge`, `unitPrice`, `quantiry`, `total`) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            </sql>
+            <parameter type="CHAR" expression="get-property('timestamp')" />
+            <parameter type="CHAR" expression="get-property('productId')" />
+            <parameter type="CHAR" expression="get-property('productName')" />
+            <parameter type="CHAR" expression="get-property('storeId')" />
+            <parameter type="CHAR" expression="get-property('customerId')" />
+            <parameter type="INTEGER" expression="get-property('customerAge')" />
+            <parameter type="DOUBLE" expression="get-property('unitPrice')" />
+            <parameter type="INTEGER" expression="get-property('quantity')" />
+            <!-- <parameter type="DOUBLE" expression="get-property('total')" /> -->
+            <parameter type="DOUBLE" expression="120" />
+        </statement>
+    </dbreport>
+
+    <respond />
+
+</sequence>

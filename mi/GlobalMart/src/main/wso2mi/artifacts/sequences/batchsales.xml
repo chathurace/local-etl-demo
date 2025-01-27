@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="batchsales" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <log category="INFO" level="full" />
+
+    <CSV.csvToJson>
+        <headerPresent>Absent</headerPresent>
+        <csvEmptyValues>Empty</csvEmptyValues>
+        <jsonKeys>product,customer,store,time,quantity</jsonKeys>
+        <rootJsonKey>salesdata</rootJsonKey>
+    </CSV.csvToJson>
+    <log category="INFO" level="full" />
+    <iterate expression="//salesdata" id="salesit" sequential="true">
+        <target>
+            <sequence>
+                <log category="INFO" level="full" />
+                <sequence key="format" />
+            </sequence>
+        </target>
+    </iterate>
+    <drop />
+
+</sequence>

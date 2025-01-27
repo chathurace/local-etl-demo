@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  crm-container:
+    image: wso2demo/crm_app:v0.1.0
+    container_name: crm-app
+    ports:
+      - "9090:9090"
+
+  std-container:
+    image: wso2demo/std_app:v0.1.0
+    container_name: std-app
+    ports:
+      - "8090:8090"
+
+  dataview-container:
+    image: wso2demo/dataview:v0.1.0
+    container_name: dataview
+    ports:
+      - "8050:8050"
+    environment:
+      BAL_CONFIG_FILES: /Config.toml
+    volumes:
+      - ./bal/dataview/Config.toml:/Config.toml
+
+  mi-etl-container:
+    image: globalmart:1.0.0
+    container_name: globalmartetl
+    ports:
+      - "8290:8290"
+    volumes:
+      - ./mi/conf/file.properties:/home/wso2carbon/wso2mi-4.3.0/conf/file.properties
+      - ./mi/conf/deployment.toml:/home/wso2carbon/wso2mi-4.3.0/conf/deployment.toml
+      - ./salesdata/in:/sales/in
+      - ./salesdata/processed:/sales/processed
+      - ./salesdata/faileD/invalid_data.csv:/sales/failed/invalid_data.csv
+      - ./mysql/mysql-connector-j-8.0.32.jar:/home/wso2carbon/wso2mi-4.3.0/lib/mysql-connector-j-8.0.32.jar
+
+  mysql-container:
+    image: mysql:8.4.3
+    container_name: mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: cce123
+      MYSQL_DATABASE: gmart
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+
+volumes:
+  mysql-data:

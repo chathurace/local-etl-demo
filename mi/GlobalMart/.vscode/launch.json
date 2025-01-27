@@ -1,0 +1,9 @@
+{
+    "configurations": [
+        {
+            "name": "MI: Run and Debug",
+            "request": "launch",
+            "type": "mi"
+        }
+    ]
+}

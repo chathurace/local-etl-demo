@@ -1,0 +1,8 @@
+[container.image]
+repository="wso2demo"
+name="crm_app"
+tag="v0.1.0"
+
+[cloud.deployment]
+internal_domain_name="crm" 
+external_accessible=true  

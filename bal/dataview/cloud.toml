@@ -1,0 +1,8 @@
+[container.image]
+repository="wso2demo"
+name="dataview"
+tag="v0.1.0"
+
+[cloud.deployment]
+internal_domain_name="dataview" 
+external_accessible=true  

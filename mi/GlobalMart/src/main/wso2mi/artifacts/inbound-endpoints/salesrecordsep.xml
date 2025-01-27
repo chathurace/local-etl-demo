@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inboundEndpoint name="salesrecordsep" sequence="batchsales" onError="batchsales" suspend="false" protocol="file">
+    <parameters xmlns="http://ws.apache.org/ns/synapse">
+        <parameter name="transport.vfs.FileURI">$FILE:SALES_DATA_IN</parameter>
+        <parameter name="interval">2</parameter>
+        <parameter name="transport.vfs.ContentType">text/csv</parameter>
+        <parameter name="transport.vfs.FileProcessInterval">1</parameter>
+        <parameter name="transport.vfs.ReplyFileName">response.csv</parameter>
+        <parameter name="sequential">true</parameter>
+        <parameter name="coordination">true</parameter>
+        <parameter name="transport.vfs.ActionAfterProcess">DELETE</parameter>
+        <parameter name="transport.vfs.MoveAfterProcess">$FILE:SALES_DATA_PROCESSED</parameter>
+        <parameter name="transport.vfs.ActionAfterFailure">DELETE</parameter>
+        <parameter name="transport.vfs.MoveFailedRecordTimestampFormat">dd-MM-yyyy HH:mm:ss</parameter>
+        <parameter name="transport.vfs.FailedRecordNextRetryDuration">3000</parameter>
+        <parameter name="transport.vfs.FileSortAscending">true</parameter>
+        <parameter name="transport.vfs.UpdateLastModified">true</parameter>
+        <parameter name="transport.vfs.Locking">enable</parameter>
+    </parameters>
+</inboundEndpoint>

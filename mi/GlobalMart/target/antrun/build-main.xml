@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="main">
+  <target name="main">
+    <copy todir="/Users/chathura/work/projects/etl/local-etl-demo/mi/GlobalMart/target/tmp_docker/CompositeApps">
+      <fileset dir="/Users/chathura/work/projects/etl/local-etl-demo/mi/GlobalMart/target">
+        <include name="*.car" />
+      </fileset>
+    </copy>
+  </target>
+</project>

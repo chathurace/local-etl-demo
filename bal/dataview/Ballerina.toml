@@ -1,0 +1,13 @@
+[package]
+org = "chathura"
+name = "dataview"
+version = "0.1.0"
+distribution = "2201.10.3"
+
+[build-options]
+observabilityIncluded = true
+
+[[platform.java17.dependency]]
+artifactId = "mysql-connector-j"
+version = "8.0.32"
+groupId = "com.mysql"
