@@ -85,3 +85,13 @@ Implementation of the complete scenario is available here.
 
 9. Show the <repo_home>/sales_data/failed/invalid_data.csv file.
     - The record with the unavailable product Id (i.e. P_103) will be written to this file. 
+
+10. Run the following command to (by changing query values and field selection as needed) to invoke the GraphQL API for querying consolidated sales data.
+
+```
+curl -X POST http://localhost:8050 \
+-H "Content-Type: application/json" \
+-d '{
+    "query": "query { sales(customer: \"C2\", store: \"S3\") { productId, customerId, storeId, customerAge } }"
+}'
+```
