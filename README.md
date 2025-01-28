@@ -2,7 +2,7 @@
 
 ## Business use case
 
-GlobalMart is a supermarket chain operated across multiple cities. Each GlobalMart outlet maintains records of daily sales. GlobalMart senior management needs to analyze overall sales data to identify sales trends and possible optimizations. In order to facilitate this requirement, it was decided to standardize and collect all sales data to central storage, upon which various analyses can be performed.
+GlobalMart is a supermarket chain operated across multiple cities. Each GlobalMart outlet maintains records of daily sales. GlobalMart senior management needs to analyze overall sales data to identify sales trends and possible optimizations. In order to facilitate this requirement, it was decided to standardize and collect all sales data to a central storage, upon which various analyses can be performed.
 
 ## Technical problem
 
@@ -45,7 +45,7 @@ WSO2 MI deployed in the central data center polls this folder periodically and s
     - If the "P_" prefix is missing, add the "P_" prefix.
     - Perform a map lookup to replace invalid product Ids with valid ones.
 - Additional product data is fetched from the MySQL product database.
-- If a product is not available in the database, the corresponding sales record is appended to the failed.csv file.
+- If a product is not available in the database, the corresponding sales record is appended to the `invalid_data.csv` file.
 - The REST API of the CRM system is called to fetch the customer's age.
 - All fetched details are combined to form consolidated sales records.
 - Consolidated sales records are written to the data warehouse.
