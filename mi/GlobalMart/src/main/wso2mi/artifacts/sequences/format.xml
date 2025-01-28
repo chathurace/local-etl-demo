@@ -3,17 +3,23 @@
     <!-- <property name="ContentType" value="application/json" scope="axis2"/> -->
     <log category="INFO" level="full" />
     <propertyGroup>
-        <property name="timestamp" scope="default" type="STRING" expression="json-eval($.salesdata.time)" action="set" />
-        <property name="productId" scope="default" type="STRING" expression="json-eval($.salesdata.product)"
+        <property name="timestamp" scope="default" type="STRING"
+            expression="json-eval($.salesdata.time)" action="set" />
+        <property name="productId" scope="default" type="STRING"
+            expression="json-eval($.salesdata.product)"
             action="set" />
-        <property name="storeId" scope="default" type="STRING" expression="json-eval($.salesdata.store)" />
-        <property name="customerId" scope="default" type="STRING" expression="json-eval($.salesdata.customer)"
+        <property name="storeId" scope="default" type="STRING"
+            expression="json-eval($.salesdata.store)" />
+        <property name="customerId" scope="default" type="STRING"
+            expression="json-eval($.salesdata.customer)"
             action="set" />
-        <property name="quantity" scope="default" type="INTEGER" expression="json-eval($.salesdata.quantity)" action="set" />
+        <property name="quantity" scope="default" type="INTEGER"
+            expression="json-eval($.salesdata.quantity)" action="set" />
     </propertyGroup>
 
     <payloadFactory media-type="json" template-type="default">
-        <format>{"id": "$1"}</format>
+        <format>{"id":
+            "$1"}</format>
         <args>
             <arg expression="get-property('productId')" evaluator="xml" />
         </args>
@@ -21,7 +27,8 @@
     <call>
         <endpoint key="ProductIdService" />
     </call>
-    <property name="productId" scope="default" type="STRING" expression="json-eval($.newId)" action="set" />
+    <property name="productId" scope="default" type="STRING" expression="json-eval($.newId)"
+        action="set" />
 
     <log category="INFO" level="custom">
         <property name="p-newProductId" expression="get-property('productId')" />
@@ -35,9 +42,7 @@
     <enrich description="">
         <source clone="true" type="body" />
         <target action="replace" type="property" property="sale_data" />
-    </enrich>
-
-    <dblookup>
+    </enrich><dblookup>
         <connection>
             <pool>
                 <driver>com.mysql.cj.jdbc.Driver</driver>
