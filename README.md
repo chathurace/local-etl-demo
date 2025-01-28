@@ -24,13 +24,14 @@ It is also necessary to expose a GraphQL API to query the sales data warehouse, 
 ![SA](images/sa.png)
 
 Sales data CSV file has the following format:
-`timestamp, storeId, customerId, productId, quantity`
+`productId, customerId, storeId, timestamp, quantity`
 
 E.g.
 ```
-2025-01-16 12:34:56,S3,C2,P_102,2
-2025-01-16 12:36:25,S3,C4,P_184,5
-2025-01-16 13:10:15,S3,C10,P_12,8
+P_102,C2,S3,2025-01-16 12:34:56,2
+102,C2,S3,2025-01-16 12:34:56,10
+P_016,C3,S3,2025-01-19 12:30:55,5
+P_103,C105,S2,2025-01-18 12:38:56,5
 ```
 
 ## Implementation
@@ -66,7 +67,7 @@ Implementation of the complete scenario is available here.
 
 3. Run <repo_home>/deploy_demo.sh to deploy the ETL demo using docker compose
 
-4. Show the products and sales_data tables (use mysql -h 127.0.0.1 -u root -p to force TCP connection to the mysql server running in a container)
+4. Show the products and sales_data tables (use `mysql -h 127.0.0.1 -u root -p` to force TCP connection to the mysql server running in a container)
     - sales_data table is initially empty
 
 5. Show the <repo_home>/sales_data/tests/data.csv file.
